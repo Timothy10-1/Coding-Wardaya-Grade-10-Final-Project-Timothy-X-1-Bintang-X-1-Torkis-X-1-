@@ -20,45 +20,45 @@ def compress(roww):
     return new
 
 def merge(roww):
-    score = 0
+    nilai = 0
     for i in range(3):
         if roww[i] != 0 and roww[i] == roww[i+1]:
             roww[i] *= 2
-            score += roww[i]
+            nilai += roww[i]
             roww[i+1] = 0
-    return roww, score
+    return roww, nilai
 
 def move_left(board):
-    score = 0
+    nilai = 0
     new_board = []
     for roww in board:
         ch = compress(roww)
         m, s = merge(ch)
         ch = compress(m)
         new_board.append(ch)
-        score += s
-    return new_board, score
+        nilai += s
+    return new_board, nilai
 
 def rotate_board(board):
     return [list(ra) for ra in zip(*board[::-1])]
 
 def move_right(board):
     board = [roww[::-1] for roww in board]
-    board, score =  move_left(board)
+    board, nilai =  move_left(board)
     board = [roww[::-1] for roww in board]
-    return board, score
+    return board, nilai
 
 def move_up(board):
     board = rotate_board(board)
-    board, score = move_left(board)
+    board, nilai = move_left(board)
     board = rotate_board(rotate_board(rotate_board(board)))
-    return board, score
+    return board, nilai
 
 def move_down(board):
     board = rotate_board(board)
-    board, score = move_right(board)
+    board, nilai = move_right(board)
     board = rotate_board(rotate_board(rotate_board(board)))
-    return board, score
+    return board, nilai
 
 def moves_available(board):
     if any(0 in roww for roww in board):
@@ -71,10 +71,10 @@ def moves_available(board):
                 return True
     return False
 
-def draw_board(stdscr, board, score):
+def draw_board(stdscr, board, nilai):
     stdscr.clear()
     stdscr.addstr("THE 2048 GAME (Pls use arrow keys to play, press Q (no caps lock) to quit the game)\n")
-    stdscr.addstr(f"Score: {score}\n\n")
+    stdscr.addstr(f"Score: {nilai}\n\n")
 
     for roww in board:
         for value in roww:
@@ -86,10 +86,10 @@ def draw_board(stdscr, board, score):
 def main(stdscr):
     curses.curs_set(0)
     board = init_board()
-    score = 0
+    nilai = 0
 
     while True:
-        draw_board(stdscr, board, score)
+        draw_board(stdscr, board, nilai)
         key = stdscr.getch()
 
         if key == ord('q'):
@@ -114,11 +114,11 @@ def main(stdscr):
 
         if moved:
             board = new_board
-            score += s
+            nilai += s
             addnewtiles(board)
 
         if not moves_available(board):
-            draw_board(stdscr, board, score)
+            draw_board(stdscr, board, nilai)
             stdscr.addstr("\nGAME OVER! NICE TRY! Press Q (no caps lock) to quit this game.\n")
             while stdscr.getch() != ord('q'):
                 pass
